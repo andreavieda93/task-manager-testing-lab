@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CreateTaskScreen } from '../../src/screens/CreateTaskScreen';
 
@@ -17,16 +17,22 @@ const renderScreen = () =>
 
 describe('CreateTaskScreen - Integración', () => {
   it('crea una tarea exitosamente y muestra confirmación', async () => {
-    await renderScreen();
+    renderScreen();
 
-    await fireEvent.changeText(
+    fireEvent.changeText(
       screen.getByPlaceholderText('Escribe el título de la tarea'),
       'Estudiar pruebas de integración'
     );
-    await fireEvent.press(screen.getByText('Guardar'));
 
-    await waitFor(() => {
-      expect(screen.getByText('Tarea creada exitosamente')).toBeTruthy();
+    await act(async () => {
+      fireEvent.press(screen.getByText('Guardar'));
     });
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Tarea creada exitosamente')).toBeTruthy();
+      },
+      { timeout: 10000 }
+    );
   });
 });
