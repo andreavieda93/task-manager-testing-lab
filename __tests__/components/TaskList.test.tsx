@@ -2,22 +2,40 @@ import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import { TaskList } from '../../src/components/TaskList';
 
-const mockTask = { id: '1', title: 'Tarea 1', status: 'pending' as const };
-const anotherTask = { id: '2', title: 'Tarea 2', status: 'completed' as const };
+const mockTask = {
+  id: '1',
+  title: 'Error en Login',
+  status: 'pending' as const,
+};
+
+const anotherTask = {
+  id: '2',
+  title: 'Error en Pagos',
+  status: 'completed' as const,
+};
 
 describe('TaskList', () => {
-  it('muestra un mensaje cuando la lista está vacía', async () => {
+  it('muestra un mensaje cuando la lista de bugs está vacía', async () => {
     await render(<TaskList tasks={[]} />);
-    expect(screen.getByText('No hay tareas aún')).toBeTruthy();
+
+    expect(
+      screen.getByText('No hay bugs registrados')
+    ).toBeTruthy();
   });
 
-  it('no muestra el mensaje de lista vacía cuando hay tareas', async () => {
+  it('no muestra el mensaje de lista vacía cuando hay bugs', async () => {
     await render(<TaskList tasks={[mockTask]} />);
-    expect(screen.queryByText('No hay tareas aún')).toBeNull();
+
+    expect(
+      screen.queryByText('No hay bugs registrados')
+    ).toBeNull();
   });
 
-  it('muestra el contador de tareas correctamente', async () => {
-    await render(<TaskList tasks={[mockTask, anotherTask]} />);
-    expect(screen.getByText('2 tareas')).toBeTruthy();
+  it('muestra el contador de bugs correctamente', async () => {
+    await render(
+      <TaskList tasks={[mockTask, anotherTask]} />
+    );
+
+    expect(screen.getByText('2 bugs')).toBeTruthy();
   });
 });
