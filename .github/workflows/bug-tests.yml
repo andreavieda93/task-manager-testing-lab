@@ -48,6 +48,7 @@ jobs:
         run: |
           npx jest \
             __tests__/integration/CreateTaskScreen.test.tsx \
+            --testTimeout=15000 \
             --ci --runInBand
 
       # Pruebas del contrato de API con Zod
@@ -56,3 +57,31 @@ jobs:
           npx jest \
             __tests__/contract/bugContract.test.ts \
             --ci --runInBand
+
+      # Cobertura exclusiva del flujo Reportar Bug
+      - name: Ejecutar cobertura del flujo Reportar Bug
+        run: |
+          npx jest \
+            __tests__/components/TaskForm.test.tsx \
+            __tests__/components/TaskList.test.tsx \
+            __tests__/components/TaskCard.test.tsx \
+            __tests__/hooks/useCreateTask.test.ts \
+            __tests__/integration/CreateTaskScreen.test.tsx \
+            __tests__/contract/bugContract.test.ts \
+            --coverage \
+            --collectCoverageFrom="src/components/TaskForm.tsx" \
+            --collectCoverageFrom="src/components/TaskList.tsx" \
+            --collectCoverageFrom="src/components/TaskCard.tsx" \
+            --collectCoverageFrom="src/hooks/useCreateTask.ts" \
+            --collectCoverageFrom="src/screens/CreateTaskScreen.tsx" \
+            --collectCoverageFrom="src/services/taskService.ts" \
+            --collectCoverageFrom="src/schemas/bugSchema.ts" \
+            --testTimeout=15000 \
+            --ci --runInBand
+
+      # Guarda el reporte de cobertura
+      - name: Guardar reporte de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-reportar-bug
+          path: coverage/
