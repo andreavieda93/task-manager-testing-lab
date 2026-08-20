@@ -1,0 +1,58 @@
+name: Suite Reportar Bug
+
+on:
+  push:
+    branches: [main, actividad4]
+
+  pull_request:
+    branches: [main, actividad4]
+
+jobs:
+  reportar-bug-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descarga el código del repositorio
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # Configura Node.js
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Instala las dependencias
+      - name: Instalar dependencias
+        run: npm ci --legacy-peer-deps
+
+      # Pruebas de componentes del flujo Reportar Bug
+      - name: Ejecutar pruebas de componentes
+        run: |
+          npx jest \
+            __tests__/components/TaskForm.test.tsx \
+            __tests__/components/TaskList.test.tsx \
+            __tests__/components/TaskCard.test.tsx \
+            --ci --runInBand
+
+      # Pruebas del hook usado para registrar bugs
+      - name: Ejecutar pruebas del hook
+        run: |
+          npx jest \
+            __tests__/hooks/useCreateTask.test.ts \
+            --ci --runInBand
+
+      # Prueba de integración de la pantalla completa
+      - name: Ejecutar prueba de integración
+        run: |
+          npx jest \
+            __tests__/integration/CreateTaskScreen.test.tsx \
+            --ci --runInBand
+
+      # Pruebas del contrato de API con Zod
+      - name: Ejecutar pruebas de contrato
+        run: |
+          npx jest \
+            __tests__/contract/bugContract.test.ts \
+            --ci --runInBand
